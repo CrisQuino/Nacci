@@ -3,6 +3,7 @@
 import numpy as np
 import pandas as pd
 from backtest_engine import run_strategy_backtest
+from data_loader import load_ohlc_data  # ✅ Usamos implementación real desde MT5
 
 def optimize_parameters_for_asset(symbol, ohlc_data=None):
     """
@@ -17,7 +18,6 @@ def optimize_parameters_for_asset(symbol, ohlc_data=None):
     Retorna:
         dict: parámetros óptimos {'tp_sl': float, 'be_threshold': float, 'ts_margin': float}
     """
-    # Si no se proveen datos, deberías cargarlos aquí desde tu fuente (ej. MT5, Yahoo, etc.)
     if ohlc_data is None:
         ohlc_data = load_ohlc_data(symbol)
 
@@ -54,10 +54,3 @@ def optimize_parameters_for_asset(symbol, ohlc_data=None):
                     }
 
     return best_params
-
-def load_ohlc_data(symbol):
-    """
-    Placeholder para cargar datos OHLC reales.
-    En producción, puedes conectar a MT5, Binance, Yahoo, etc.
-    """
-    raise NotImplementedError("Falta implementar carga de datos OHLC para " + symbol)
