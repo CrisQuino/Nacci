@@ -1,11 +1,20 @@
 # chatgpt_client.py
 
 import openai
-from config import OPENAI_API_KEY
 import MetaTrader5 as mt5
 from datetime import datetime
+import os
+import openai
 
-openai.api_key = OPENAI_API_KEY
+# Lee la clave desde la variable de entorno (Railway o local)
+openai.api_key = os.getenv("OPENAI_API_KEY")
+
+if not openai.api_key:
+    print("❌ ERROR: OPENAI_API_KEY no detectada en el entorno.")
+else:
+    print("✅ OpenAI API Key detectada correctamente.")
+
+
 
 def build_prompt(symbol):
     """
