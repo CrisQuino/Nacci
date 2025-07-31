@@ -1,0 +1,5 @@
+openai
+MetaTrader5
+pandas
+numpy
+schedule
