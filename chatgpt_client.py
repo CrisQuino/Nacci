@@ -3,13 +3,13 @@
 import openai
 from config import OPENAI_API_KEY
 import MetaTrader5 as mt5
-from datetime import datetime, timedelta
+from datetime import datetime
 
 openai.api_key = OPENAI_API_KEY
 
 def build_prompt(symbol):
     """
-    Crea el prompt para ChatGPT con el resumen técnico del activo actual.
+    Crea el prompt para ChatGPT con análisis técnico + contexto macroeconómico.
     """
     if not mt5.initialize():
         raise Exception("MT5 no iniciado.")
@@ -31,15 +31,22 @@ def build_prompt(symbol):
     ]
 
     prompt = f"""
-Eres un experto en trading técnico.
+Eres un experto en trading profesional y análisis macroeconómico.
 
-Analiza el siguiente activo: {symbol}.
-Aquí tienes las últimas 20 velas diarias con datos OHLC:
+Analiza el activo: {symbol}.
+Aquí están las últimas 20 velas diarias con datos OHLC:
 
 {ohlc}
 
-Con base en la estrategia: fractal + retroceso del 38.2 % + rotura de nivel,
-responde si existe una oportunidad de entrada. Si la hay, responde solo en JSON como:
+Evalúa si hay oportunidad de entrada basada en esta estrategia:
+
+1. Fractal confirmado (patrón técnico de cambio de dirección)
+2. Retroceso al nivel del 38.2 % de Fibonacci
+3. Ruptura del nivel del impulso anterior
+
+Además, considera **el contexto macroeconómico actual global** (tasas, inflación, noticias clave, eventos de alto impacto) y cómo podría influir en este activo. Solo si todos los criterios convergen, da una señal de entrada.
+
+Responde solo en JSON si hay entrada:
 
 {{
   "valid": true,
@@ -53,6 +60,7 @@ Si no hay entrada, responde:
 
 {{ "valid": false }}
 """
+
     return prompt
 
 def check_entry_signal(symbol):
@@ -68,7 +76,7 @@ def check_entry_signal(symbol):
         response = openai.ChatCompletion.create(
             model="gpt-4",
             messages=[
-                {"role": "system", "content": "Eres un asistente experto en trading técnico."},
+                {"role": "system", "content": "Eres un analista técnico y macroeconómico profesional."},
                 {"role": "user", "content": prompt}
             ],
             temperature=0
